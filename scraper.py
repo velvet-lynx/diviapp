@@ -37,7 +37,7 @@ class Scraper:
 		return self.params
 
 	def create_soup(self):
-		return BeautifulSoup(self.request(), 'html.parser')
+		return BeautifulSoup(self.request(), "lxml")
 
 	def request(self):
 		"""Execute an HTTP request and return the response body"""
