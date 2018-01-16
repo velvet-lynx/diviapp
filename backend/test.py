@@ -2,6 +2,9 @@ import urllib.request
 from lxml import etree
 from helper import Pool
 from pprint import pprint
+from sqlalchemy import insert
+from _config import db
+from db_create import lines, stops, is_part_of
 
 POOL_SIZE = 10
 
@@ -12,6 +15,15 @@ BASE_URL_STOPS = "http://timeo3.keolis.com/relais/217.php?xml=3"
 # Each tuple is made of n successive elements
 def grouped(iterable, n):
 	return list(zip(*[iter(iterable)]*n))
+
+def create_dic_list(tup_list, keys):
+	list = []
+	for tup in tup_list:
+		dic = {}
+		for key in keys:
+			dic[key] = tup[keys.index(key)]
+		list.append(dic)
+	return list
 
 def get_xml_from_url(url):
 	result = urllib.request.urlopen(url)
@@ -27,9 +39,13 @@ def get_from_xml(url, xpath):
 def get_lines(url):
 	lines = get_from_xml(
 		url,
-		"//ligne/*[self::code or self::sens]/text()"
+		"//ligne/*[ \
+			self::code or \
+			self::nom or \
+			self::vers or \
+			self::sens]/text()"
 	)
-	return grouped(lines, 2)
+	return grouped(lines, 4)
 
 def get_stops(url):
 	stops = get_from_xml(
@@ -57,20 +73,25 @@ def process_stops(stops):
 	with Pool(POOL_SIZE) as p:
 		results = p.map(get_times, stops)
 	return results
-	
-
 
 if __name__ == "__main__":
+	connection = db.connect()
 
-	lines = get_lines(BASE_URL_LINES)
+	lines_columns = ["line_ref","line_name","line_way","line_dest"]
+	lines_datas = get_lines(BASE_URL_LINES)
+	pprint(lines_datas)
+	lines_datas = create_dic_list(lines_datas, lines_columns)
+	result = connection.execute(lines.insert(), lines_datas)
 
 	lines_urls = [
-					BASE_URL_LINES+"&ligne="+line+"&sens="+way
-					for line, way in lines
-				]
+		BASE_URL_LINES+"&ligne="+line["line_ref"]+"&sens="+lines['line_way']
+		for line in lines
+	]
 
 	with Pool(POOL_SIZE) as p:
-		stops_list = p.map(get_stops, lines_urls)
+		stops_datas = p.map(get_stops, lines_urls)
+
+	stops_datas = create_dic_list
 
 	with Pool(POOL_SIZE) as p:
 		results = p.map(process_stops, stops_list)

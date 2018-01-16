@@ -17,7 +17,6 @@ class Scraper:
 		self.headers = headers
 		self.datas = DictList()
 
-
 	def set_url(self, url):
 		self.url = url
 
