@@ -1,53 +1,47 @@
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import ForeignKey, Column, Integer, String
-from sqlalchemy.orm import relationship
+from app_config import db
 
-Base = declarative_base()
+class Link(db.Model):
+    __tablename__ = "links"
 
-class Stop(Base):
-	__tablename__ = "stops"
+    stop_id = db.Column(db.Integer, db.ForeignKey("stops.stop_id"), primary_key=True)
+    line_id = db.Column(db.Integer, db.ForeignKey("lines.line_id"), primary_key=True)
+    stop_ref = db.Column(db.String(100), nullable=False)
 
-	id = Column(Integer, primary_key=True)
-	name = Column(String, nullable=False)
-	line_stop = relationship("LineStop")
-
-	def __init__(self, datas):
-		for key, value in datas.items():
-			setattr(self, key, value)
-
-	def __repr__(self):
-		return "<Stop :: name=%s>" % self.name
+    def __init__(self, stop_id=None, line_id=None, stop_ref=None):
+        self.stop_id = stop_id
+        self.line_id = line_id
+        self.stop_ref = stop_ref
 
 
-class Line(Base):
-	__tablename__ = "lines"
+class Stop(db.Model):
+    __tablename__ = "stops"
 
-	id = Column(Integer, primary_key=True)
-	name = Column(String, nullable=False)
-	destination = Column(String, nullable=False)
-	line_stop = relationship("LineStop")
+    stop_id = db.Column(db.Integer, primary_key=True)
+    stop_name = db.Column(db.String(100), nullable=False)
+    stop_lat = db.Column(db.String(100))
+    stop_lon = db.Column(db.String(100))
 
-	def __init__(self, datas):
-		for key, value in datas.items():
-			setattr(self, key, value)
+    link = db.relationship(Link, backref="stop")
 
-	def __repr__(self):
-		return "<Line :: name=%s, destination=%s" % (self.name, self.destination)
+    def __init__(self, stop_name=None, stop_lat=None, stop_lon=None):
+        self.stop_name = stop_name
+        self.stop_lat = stop_lat
+        self.stop_lon = stop_lon
 
 
-class LineStop(Base):
-	__tablename__ = "lines_stops"
+class Line(db.Model):
+    __tablename__ = "lines"
 
-	id = Column(Integer, primary_key=True, autoincrement=True)
-	line_id = Column(Integer, ForeignKey("lines.id"))
-	stop_id = Column(Integer, ForeignKey("stops.id"))
-	totem = Column(Integer, nullable=False)
-	previous = Column(Integer, ForeignKey("lines_stops.id"))
-	line_stop = relationship("LineStop", remote_side=[id])
+    line_id = db.Column(db.Integer, primary_key=True)
+    line_ref = db.Column(db.String(100), nullable=False)
+    line_name = db.Column(db.String(100), nullable=False)
+    line_dest = db.Column(db.String(100), nullable=False)
+    line_way = db.Column(db.String(1), nullable=False)
 
-	def __init__(self, datas):
-		for key, value in datas.items():
-			setattr(self, key, value)
+    link = db.relationship(Link, backref="line")
 
-	def __repr__(self):
-		return "<LineStop :: line_id=%d stop_id=%d>" % (self.line_id, self.stop_id)
+    def __init__(self, line_ref=None, line_name=None, line_dest=None, line_way=None):
+        self.line_ref = line_ref
+        self.line_name = line_name
+        self.line_dest = line_dest
+        self.line_way = line_way
