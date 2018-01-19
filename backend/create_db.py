@@ -26,6 +26,7 @@ xml_helper = XMLHelper()
 
 
 def create_line(line):
+    """ Create a Line object from a dictionnary """
     return Line(
         line_name=line['line_name'],
         line_dest=line["line_dest"],
@@ -34,11 +35,13 @@ def create_line(line):
     )
 
 def create_stop(stop):
+    """ Create a Stop object from a dictionnary """
     return Stop(
         stop_name=stop['stop_name']
     )
 
 def create_link(stop, line, stop_ref):
+    """ Create a Link object from a dictionnary """
     link = Link(
         line_id=line.line_id,
         stop_id=stop.stop_id,
