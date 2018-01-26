@@ -1,33 +1,26 @@
-from flask import jsonify
+from flask import jsonify, request
 from flask_restless import APIManager
 from models import Stop, Line, Link
 from app_config import db, app
 import app_config
 
-def create_dict(tup, keys, id_col):
-    """ Create a JSONlike dictionnary from keys and values in tuple
-        with id_col being the object identifier"""
-    return {    
-        tup[id_col]: { 
-            key: tup[i] for i, key in enumerate(keys) if i != id_col
-        }
-    }
+def create_dict(tup, keys):
+    """ Create a JSONlike dictionnary from keys and values in tuple """
+    return {key: tup[i] for i, key in enumerate(keys)}
 
-def get_datas(query, id_col=None):
+def get_datas(query):
     """ Create a dictionnary of JSONlike objects from an SQLAlchemy query """
     records = None
-    datas = {}
+    datas = None
     if isinstance(query, db.Model):
         datas = query.to_dict()
     else:
         keys = [col["name"] for col in query.column_descriptions]
         records = query.all()
         if records is list and isinstance(records[0], db.Model):
-            for record in records:
-                datas.update(record.to_dict())
+            datas = [record.to_dict() for record in records]
         else:
-            for record in records:
-                datas.update(create_dict(record, keys, id_col))
+            datas = [create_dict(record, keys) for record in records]
     return datas
 
 
@@ -67,7 +60,7 @@ def get_links(line_id):
         Link.stop_ref
     )
     query = query.join(Link).join(Stop).filter(Link.line_id == line_id)
-    return jsonify(get_datas(query, 4))
+    return jsonify(get_datas(query))
 
 @app.route("/lines/<int:line_id>/stops/<int:stop_id>", methods=['GET'])
 def get_link(line_id, stop_id):
@@ -83,7 +76,15 @@ def get_link(line_id, stop_id):
     query = query.join(Link).join(Stop).filter(
         db.and_(Link.line_id == line_id, Link.stop_id == stop_id)
     )
-    return jsonify(get_datas(query, 4))
+    return jsonify(get_datas(query))
+
+@app.route("/link/<int:link_id>", methods=["PUT"])
+def update_link(link_id):
+    """ API endpoint allowing you to update a link """
+    link = db.session.query(Link).get(link_id)
+    link.stop_ref = request.json.get("stop_ref", link.stop_ref)
+    db.session.commit()
+    return jsonify(get_datas(link))
 
 if __name__ == "__main__":
     app.run(debug=True)
