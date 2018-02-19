@@ -1,23 +1,35 @@
 <template>
-  <div id="app">
-    <img src="./assets/logo.png">
-    <router-view/>
-  </div>
+  <!--<nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="#">
+        <h1>DiviApp</h1>
+      </a>
+      <button class="button navbar-burger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>-->
+
+  <admin></admin>
 </template>
 
 <script>
+import admin from "./components/Admin.vue";
+
 export default {
-  name: 'App'
+  name: 'app',
+  data () {
+    return {
+    }
+  },
+  components: {
+    admin
+  }
 }
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>

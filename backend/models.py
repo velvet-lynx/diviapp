@@ -33,12 +33,11 @@ class Stop(db.Model):
         return self.stop_name
 
     def to_dict(self):
-        return { 
-            self.stop_id : {
-                "stop_name": self.stop_name,
-                "stop_lat": self.stop_lat,
-                "stop_lon": self.stop_lon
-            }
+        return {
+            "stop_id": self.stop_id,
+            "stop_name": self.stop_name,
+            "stop_lat": self.stop_lat,
+            "stop_lon": self.stop_lon
         }
 
 
@@ -61,12 +60,11 @@ class Line(db.Model):
     
     def to_dict(self):
         return {
-            self.line_id: {
-                "line_ref": self.line_ref,
-                "line_name": self.line_name,
-                "line_dest": self.line_dest,
-                "line_way": self.line_way
-            }
+            "line_id": self.line_id,
+            "line_ref": self.line_ref,
+            "line_name": self.line_name,
+            "line_dest": self.line_dest,
+            "line_way": self.line_way
         }
     
     def __str__(self):

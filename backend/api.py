@@ -17,12 +17,19 @@ def get_datas(query):
     else:
         keys = [col["name"] for col in query.column_descriptions]
         records = query.all()
-        if records is list and isinstance(records[0], db.Model):
+        if isinstance(records, list) and isinstance(records[0], db.Model):
             datas = [record.to_dict() for record in records]
         else:
             datas = [create_dict(record, keys) for record in records]
     return datas
 
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    response.headers.add('Access-Control-Allow-Credentials','true')
+    return response
 
 @app.route("/lines/", methods=['GET'])
 def get_lines():
