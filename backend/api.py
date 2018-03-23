@@ -1,5 +1,4 @@
 from flask import jsonify, request
-from flask_restless import APIManager
 from models import Stop, Line, Link
 from app_config import db, app
 import app_config
