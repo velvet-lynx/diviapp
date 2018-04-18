@@ -1,0 +1,7 @@
+{
+  "tests/helpers/test_xml.py::XmlFunctionsTests": true,
+  "tests/helpers/test_xml.py::XmlFunctionsTests::test_get_xml_should_raise_exception_given_an_incorrect_xml_url": true,
+  "tests/helpers/test_xml.py::XmlFunctionsTests::test_get_xml_should_return_a_string_given_a_correct_xml_url": true,
+  "tests/helpers/test_xml.py::XmlFunctionsTests::test_query_xml_should_return_an_array_of_elements_given_a_valid_request": true,
+  "tests/helpers/test_xml.py::XmlFunctionsTests::test_query_xml_should_return_an_empty_array_given_a_non_valid_request": true
+}
