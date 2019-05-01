@@ -1,0 +1,38 @@
+version: '3.7'
+
+services:
+
+  diviapi:
+    build:
+      context: ./services/diviapi
+      dockerfile: Dockerfile-dev
+    volumes:
+      - './services/diviapi:/usr/src/app'
+    ports:
+      - 5001:5000
+    environment:
+      - FLASK_ENV=development
+      - APP_SETTINGS=project.config.DevelopmentConfig
+    #   - CELERY_BROKER_URL=redis://redis:6379/0
+    #   - CELERY_BACKEND_URL=redis://redis:6379/0
+    # depends_on:
+    #   - redis
+  
+  redis:
+    build:
+      context: ./services/redis
+      dockerfile: Dockerfile
+    ports:
+      - '6379:6379'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    
+  nginx:
+    build:
+      context: ./services/nginx
+      dockerfile: Dockerfile-dev
+    restart: always
+    ports:
+      - 80:80
+    depends_on:
+      - diviapi

@@ -1,3 +1,3 @@
 {
-    "python.pythonPath": "/home/arki/Documents/Projects/diviapp/backend/env/bin/python3"
+    "python.pythonPath": "${workspaceFolder}/services/diviapi/env/bin/python"
 }

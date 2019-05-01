@@ -1,2 +1,0 @@
-(ns new-frontend.admin)
-
