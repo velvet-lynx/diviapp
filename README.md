@@ -1,5 +1,7 @@
 # DiviApp
 
+[![Build Status](https://travis-ci.com/sissou96/diviapp.svg?token=UQbu59dwYBsjwwqPpYKV&branch=master)](https://travis-ci.com/sissou96/diviapp)
+
 ### Current status : In development
 
 #### Used technologies
