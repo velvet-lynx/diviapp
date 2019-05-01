@@ -14,9 +14,14 @@ def get_lines_route():
         "message": "External API unreachable"
     }
     if lines is not None:
-        response = {
-            "payload": lines,
-            "status": "success"
-        }
-        return jsonify(response), 200
-    return jsonify(response), 400
+        if not lines:
+            response['message'] = "No infos are available"
+            return jsonify(response), 400
+        else:
+            response = {
+                "payload": lines,
+                "status": "success"
+            }
+            return jsonify(response), 200
+    else:
+        return jsonify(response), 400
