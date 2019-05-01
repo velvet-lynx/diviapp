@@ -1,3 +1,4 @@
+language: generic
 sudo: required
 
 services:
@@ -19,7 +20,7 @@ before_script:
   - docker-compose -f docker-compose-dev.yml up --build -d
 
 script:
-  - docker-compose -f docker-compose-dev.yml exec diaviapi python manage.py test
+  - docker-compose -f docker-compose-dev.yml exec diviapi python manage.py test
   - docker-compose -f docker-compose-dev.yml exec diviapi flake8 project
   #- docker-compose -f docker-compose-dev.yml exec client npm run test:ci
 
