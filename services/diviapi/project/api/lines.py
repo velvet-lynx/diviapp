@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
 
-from project.services import get_lines
+from project.services import get_lines, get_stops
 
 lines = Blueprint('lines', __name__)
 
@@ -20,6 +20,28 @@ def get_lines_route():
         else:
             response = {
                 "payload": lines,
+                "status": "success"
+            }
+            return jsonify(response), 200
+    else:
+        return jsonify(response), 400
+
+
+@lines.route("/api/stops/<code>:<way>", methods=['GET'])
+def get_line_route(code, way):
+    """ API endpoint returning stops of a given line """
+    stops = get_stops(code, way)
+    response = {
+        "status": "fail",
+        "message": "External API unreachable"
+    }
+    if stops is not None:
+        if not stops:
+            response['message'] = "No infos are available"
+            return jsonify(response), 400
+        else:
+            response = {
+                "payload": stops,
                 "status": "success"
             }
             return jsonify(response), 200

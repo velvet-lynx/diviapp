@@ -4,8 +4,9 @@ from unittest.mock import patch
 
 from requests.exceptions import Timeout
 
-from project.services import get_lines, create_dict_from_element
-from mock_utils import mock_lines_xml
+from project.services import get_lines, create_dict_from_element, \
+                        get_stops
+from mock_utils import mock_lines_xml, mock_stops_xml
 
 
 class TestServices(unittest.TestCase):
@@ -30,8 +31,7 @@ class TestServices(unittest.TestCase):
         mock_get.return_value.ok = True
         mock_get.return_value.text = mock_lines_xml
         result = get_lines()
-        expected_result = [
-            {
+        expected_result = [{
                 "code": "T1",
                 "name": "T1",
                 "way": "A",
@@ -42,10 +42,9 @@ class TestServices(unittest.TestCase):
                 "name": "T1",
                 "way": "R",
                 "destination": "DIJON Gare"
-            }
-        ]
+            }]
         self.assertIsNotNone(result)
-        self.assertTrue(isinstance(result, list))
+        self.assertIsInstance(result, list)
         self.assertListEqual(result, expected_result)
 
     @patch('project.services.requests.get', side_effect=Timeout)
@@ -53,3 +52,27 @@ class TestServices(unittest.TestCase):
         """Ensure get_lines returns None when there is a request timeout."""
         result = get_lines()
         self.assertIsNone(result)
+
+    @patch('project.services.requests.get')
+    def test_get_stops(self, mock_get):
+        """Ensure get_stops behaves correctly."""
+        mock_get.return_value.ok = True
+        mock_get.return_value.text = mock_stops_xml
+        code = "T1"
+        way = "A"
+        result = get_stops(code, way)
+        expected_result = [{
+                "name": "Auditorium",
+                "refs": ["274400518", "274399749", "274401798"]
+            },
+            {
+                "name": "Cap Vert",
+                "refs": ["274400527", "274399758", "274401807"]
+            }]
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, list)
+        self.assertListEqual(result, expected_result)
+
+
+if __name__ == "__main__":
+    unittest.main()
