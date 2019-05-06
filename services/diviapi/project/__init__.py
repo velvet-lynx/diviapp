@@ -20,7 +20,9 @@ def create_app(script_info=None):
 
     # register Blueprints
     from project.api.lines import lines
+    from project.api.stops import stops
     app.register_blueprint(lines)
+    app.register_blueprint(stops)
 
     # shell context for flask cli
     @app.shell_context_processor

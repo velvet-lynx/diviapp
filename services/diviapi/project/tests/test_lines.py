@@ -3,11 +3,11 @@ import unittest
 from unittest.mock import patch
 
 from base import BaseTestCase
-from mock_utils import mock_lines_xml, mock_stops_xml
+from mock_utils import mock_lines_xml
 
 
-class TestUserService(BaseTestCase):
-    """Tests for the Users Service"""
+class TestLinesRoute(BaseTestCase):
+    """Tests for the /lines route of the Diviapi service"""
 
     @patch('project.services.requests.get')
     def test_lines(self, mock_get):
@@ -27,7 +27,7 @@ class TestUserService(BaseTestCase):
         mock_get_lines.return_value = None
         response = self.client.get('/api/lines')
         data = json.loads(response.data.decode())
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 500)
         self.assertIn('fail', data['status'])
         self.assertIn('External API unreachable', data['message'])
 
@@ -37,21 +37,9 @@ class TestUserService(BaseTestCase):
         mock_get_lines.return_value = []
         response = self.client.get('/api/lines')
         data = json.loads(response.data.decode())
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 500)
         self.assertIn('fail', data['status'])
         self.assertIn('No infos are available', data['message'])
-
-    @patch('project.services.requests.get')
-    def test_stops(self, mock_get):
-        """Ensure the '/stops/<code>:<way>' route behaves correctly."""
-        mock_get.return_value.ok = True
-        mock_get.return_value.text = mock_stops_xml
-        response = self.client.get('/api/stops/T1:A')
-        data = json.loads(response.data.decode())
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('success', data['status'])
-        self.assertIsInstance(data['payload'], list)
-        self.assertIn("Auditorium", data['payload'][0]['name'])
 
 
 if __name__ == "__main__":

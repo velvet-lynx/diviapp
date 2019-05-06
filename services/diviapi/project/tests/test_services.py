@@ -5,11 +5,13 @@ from unittest.mock import patch
 from requests.exceptions import Timeout
 
 from project.services import get_lines, create_dict_from_element, \
-                        get_stops
+                            get_stops
 from mock_utils import mock_lines_xml, mock_stops_xml
 
 
 class TestServices(unittest.TestCase):
+    """Tests for the services helpers."""
+
     def test_create_dict_from_element(self):
         """Ensure create_dict_from_element behaves correctly."""
         matching_dict = {
@@ -35,13 +37,15 @@ class TestServices(unittest.TestCase):
                 "code": "T1",
                 "name": "T1",
                 "way": "A",
-                "destination": "QUETIGNY Centre"
+                "destination": "QUETIGNY Centre",
+                "color": "#cc00cc"
             },
             {
                 "code": "T1",
                 "name": "T1",
                 "way": "R",
-                "destination": "DIJON Gare"
+                "destination": "DIJON Gare",
+                "color": "#cc00cc"
             }]
         self.assertIsNotNone(result)
         self.assertIsInstance(result, list)
@@ -62,10 +66,12 @@ class TestServices(unittest.TestCase):
         way = "A"
         result = get_stops(code, way)
         expected_result = [{
+                "code": "1542",
                 "name": "Auditorium",
                 "refs": ["274400518", "274399749", "274401798"]
             },
             {
+                "code": "1545",
                 "name": "Cap Vert",
                 "refs": ["274400527", "274399758", "274401807"]
             }]

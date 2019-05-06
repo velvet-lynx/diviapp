@@ -11,13 +11,19 @@ LINE_MATCHING_DICT = {
     "code": "code",
     "destination": "vers",
     "way": "sens",
-    "name": "nom"
+    "name": "nom",
+    "color": "couleur"
 }
 
 STOP_MATCHING_DICT = {
+    "code": ".//code",
     "name": ".//nom",
     "refs": "refs"
 }
+
+
+def color_hex(number):
+    return "#" + hex(int(number))[2:]
 
 
 def create_dict_from_element(matching_dict, element):
@@ -33,9 +39,13 @@ def get_lines():
         if response.ok:
             root = ET.fromstring(response.text)
             lines = root.findall('.//ligne')
-            return [
+            results = [
                 create_dict_from_element(LINE_MATCHING_DICT, line)
                 for line in lines
+            ]
+            return [
+                {**result, "color": color_hex(result['color'])}
+                for result in results
             ]
     except Timeout:
         return None

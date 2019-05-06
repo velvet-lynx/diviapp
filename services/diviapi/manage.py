@@ -1,5 +1,6 @@
 import unittest
 import coverage
+from flask import url_for
 from flask.cli import FlaskGroup
 
 from project import create_app
@@ -41,6 +42,12 @@ def cov():
         COV.erase()
         return 0
     return 1
+
+@cli.command()
+def routes():
+    import pprint
+    pprint.pprint(list(app.url_map.iter_rules()))
+
 
 if __name__ == "__main__":
     cli()
