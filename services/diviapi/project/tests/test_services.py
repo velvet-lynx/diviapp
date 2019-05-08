@@ -5,8 +5,9 @@ from unittest.mock import patch
 from requests.exceptions import Timeout
 
 from project.services import get_lines, create_dict_from_element, \
-                            get_stops
-from mock_utils import mock_lines_xml, mock_stops_xml
+                            get_stops, get_stop, get_times
+from mock_utils import mock_lines_xml, mock_stops_xml, \
+                    mock_stop_xml, mock_times_xml
 
 
 class TestServices(unittest.TestCase):
@@ -29,7 +30,7 @@ class TestServices(unittest.TestCase):
 
     @patch('project.services.requests.get')
     def test_get_lines(self, mock_get):
-        """Ensure get_lines behaves correctly given a valid xml."""
+        """Ensure get_lines behaves."""
         mock_get.return_value.ok = True
         mock_get.return_value.text = mock_lines_xml
         result = get_lines()
@@ -62,22 +63,54 @@ class TestServices(unittest.TestCase):
         """Ensure get_stops behaves correctly."""
         mock_get.return_value.ok = True
         mock_get.return_value.text = mock_stops_xml
-        code = "T1"
-        way = "A"
-        result = get_stops(code, way)
+        result = get_stops("T1", "A")
         expected_result = [{
                 "code": "1542",
-                "name": "Auditorium",
-                "refs": ["274400518", "274399749", "274401798"]
+                "name": "Auditorium"
             },
             {
                 "code": "1545",
-                "name": "Cap Vert",
-                "refs": ["274400527", "274399758", "274401807"]
+                "name": "Cap Vert"
             }]
         self.assertIsNotNone(result)
         self.assertIsInstance(result, list)
         self.assertListEqual(result, expected_result)
+
+    @patch('project.services.requests.get')
+    def test_get_stop(self, mock_get):
+        """Ensure get_stop behaves correctly."""
+        mock_get.return_value.ok = True
+        mock_get.return_value.text = mock_stop_xml
+        result = get_stop("1542")
+        expected_result = {
+            "code": "1542",
+            "name": "Auditorium",
+            "refs": ["274400518", "274399749", "274401798"]
+        }
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, dict)
+        self.assertEqual(result, expected_result)
+
+    @patch('project.services.get_stop')
+    @patch('project.services.requests.get')
+    def test_get_times(self, mock_get, mock_get_stop):
+        """Ensure get_times behaves correctly."""
+        mock_get_stop.return_value = {
+            "code": "1542",
+            "name": "Auditorium",
+            "refs": ["274400518", "274399749", "274401798"]
+        }
+        mock_get.return_value.ok = True
+        mock_get.return_value.text = mock_times_xml
+        result = get_times("1542")
+        expected_result = {
+            "code": "1542",
+            "name": "Auditorium",
+            "times": ["5", "12"]
+        }
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, dict)
+        self.assertEqual(result, expected_result)
 
 
 if __name__ == "__main__":
