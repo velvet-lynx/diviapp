@@ -4,6 +4,8 @@
 
 ### Current status : In development
 
+Link: http://diviapp.herokuapp.com/
+
 #### Used technologies
 
 - __Python 3.8__ : the almighty python language
